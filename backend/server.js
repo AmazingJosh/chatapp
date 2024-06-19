@@ -10,8 +10,11 @@ import bodyParser from "body-parser"
 
 dotenv.config()
 import { app, server } from "./socket/socket.js"
+import path from "path"
 
 const PORT = process.env.PORT
+
+const __dirname = path.resolve()
 
 app.use(express.json());
 app.use(cookieParser());
@@ -19,12 +22,17 @@ app.use(cors())
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(bodyParser.json())
 
+
+
+app.use(express.static(path.join(__dirname, "frontend/dist")))
+
+
 app.use("/api/auth", authRoutes)
 app.use("/api/messages", messageRoutes)
 app.use("/api/users", userRoutes)
 
-app.get("/api/auth/signup", (req,res)=>{
-    res.send("working fine")
+app.get("*", (req,res)=>{
+    res.sendFile(path.join(__dirname,"frontend","dist","index.html"))
 })
 
 
