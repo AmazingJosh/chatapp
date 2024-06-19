@@ -5,25 +5,31 @@ import messageRoutes from "./routes/messageroute.js"
 import userRoutes from "./routes/usersroute.js"
 import connectToMongodb from "./db/mongodbconnectionstring.js"
 import cookieParser from "cookie-parser"
-dotenv.config()
+import cors from "cors"
+import bodyParser from "body-parser"
 
-const app = express()
+dotenv.config()
+import { app, server } from "./socket/socket.js"
+
 const PORT = process.env.PORT
 
-app.use(cookieParser());
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors())
+app.use(bodyParser.urlencoded({extended:true}))
+app.use(bodyParser.json())
 
 app.use("/api/auth", authRoutes)
-app.use("/api/message", messageRoutes)
+app.use("/api/messages", messageRoutes)
 app.use("/api/users", userRoutes)
 
-app.get("/", (req,res)=>{
-    res.send("hello world")
+app.get("/api/auth/signup", (req,res)=>{
+    res.send("working fine")
 })
 
 
 
-app.listen(PORT, ()=>{
+server.listen(PORT, ()=>{
     connectToMongodb()
     console.log(`listening on port ${PORT}`)
 })

@@ -1,5 +1,5 @@
 import User from "../models/usermodel.js"
-import bycrypt from "bcryptjs"
+import bcrypt from "bcryptjs"
 import genTokenandsetCookie from "../utils/generateToken.js";
 export const SignUp = async(req,res)=>{
     try{
@@ -15,8 +15,8 @@ export const SignUp = async(req,res)=>{
         return res.status(401).json({error:"username already exists"})
       }
 
-      const salt = await bycrypt.genSalt(10);
-      const hashedPassword = await bycrypt.hash(password, salt)
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt)
       const boyprofilepic = `https://avatar.iran.liara.run/public/boy?username=${username}`
       const girlprofilepic = `https://avatar.iran.liara.run/public/girl?username=${username}`
 
@@ -50,33 +50,31 @@ export const SignUp = async(req,res)=>{
 
 }
 
-export const Login = async(req,res) => {
+export const Login = async (req, res) => {
+	try {
+		const { username, password } = req.body;
+		const user = await User.findOne({ username });
+		const isPasswordCorrect = await bcrypt.compare(password, user?.password || "");
 
-  try {
-    const {username, password} = req.body;
-    const user = await User.findOne({username});
-    const isPasswordCorrect= await bycrypt.compare(password, user?.password || "")
-    if(!user || !isPasswordCorrect){
-      return res.status(400).json({error:"invalid username or password"})
-    }
-    genTokenandsetCookie(user._id, res)
+		if (!user || !isPasswordCorrect) {
+			return res.status(400).json({ error: "Invalid username or password" });
+		}
 
-    res.status(200).json({
-      _id:user._id, 
-      fullname:user.fullname,
-      username:user.username,
-      profilepic:user.profilepic
-      
-      
-    })
-    
-  } catch (error) {
-    console.log("Error in login controller", error.message)
-    res.status(500).json({error:"internal error server"})
-  }
+		genTokenandsetCookie(user._id, res);
+
+		res.status(200).json({
+			_id: user._id,
+			fullName: user.fullname,
+			username: user.username,
+			profilePic: user.profilepic,
+		});
+	} catch (error) {
+		console.log("Error in login controller", error.message);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
+};
 
 
-}
 
 export const Logout = async (req, res)=>{
 
