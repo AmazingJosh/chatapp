@@ -17,7 +17,8 @@ const PORT = process.env.PORT
 const __dirname = path.resolve()
 app.use(cors({
     origin:"*",
-    methods :"POST,GET",
+    credentials:'',
+    methods :["POST","GET","PUT","DELETE"],
     
 }))
 

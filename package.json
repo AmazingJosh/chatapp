@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon backend/server.js",
-    "start": "node backend/server.js",
-    "build": "install && npm install --prefix frontend && npm run build --prefix frontend"
+      "build": "install && npm install --prefix frontend && npm run build --prefix frontend"
   },
   "type": "module",
   "keywords": [],
